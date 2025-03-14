@@ -37,7 +37,7 @@ class ODE_1st(tf.keras.Model):
                 tape2.watch(x)
                 y0_NN = self(x0, training=True)
                 y_NN = self(x, training=True)
-            dy_dx_NN = tape2.gradient(y_NN,x)
+                dy_dx_NN = tape2.gradient(y_NN,x)
             
             #Loss = ODE + boundary/initial conditions
             L_d = self.compiled_loss(dy_dx_NN, -y_NN)
