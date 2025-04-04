@@ -1,0 +1,4 @@
+NN_mark{i} files are benchmarks used to compare with PINN_mark{i} files and check what modifications to loss2 function can better model the P.D.E. solver
+
+This model has 2 losses in the PINN programs, the first one being the error between y-value predicted by the NN and the y-value from training dataset, this is a simple Mean Square Error stored as loss1.
+The second loss is the residual loss from physics constraints (P.D.E. and B.C.s) stored in loss2.
