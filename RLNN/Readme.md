@@ -14,5 +14,5 @@ The initial condition y(0) = 1 is being forgotten as network is learning about b
 y'(0) = 1 is given least weightage as it is introducing extreme phase shift into the predictions
 pde_loss is given generic loss weightage of 1
 
-
+![plot](./RLNN/RLNN_mark2.png)
 
