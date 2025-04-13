@@ -64,7 +64,7 @@ def plot_result(x,y,x_c,y_pred):
     
     plt.figure(figsize = (8,4))
 
-    plt.scatter(x_axis, y_axis, color="red", linewidth=2, alpha=0.8, label="PINN prediction")
+    plt.scatter(x_axis, y_axis, color="red", linewidth=0.2, alpha=0.8, label="PINN prediction")
     plt.plot(x,y, color="blue", linewidth=2, alpha=0.8, linestyle='--', label="Exact Solution")
     # l=plt.legend(loc=(0.67,0.62), frameon=False, fontsize="large")
     # plt.setp(l.get_texts(), color="k")
@@ -100,7 +100,7 @@ class FCN(nn.Module): #Forward Connected Network
 # backpropagation needs to be mentioned to the network
 
 # Collocation points are needed to train network on Physics constraints
-xPoints = np.random.rand(1000)*8
+xPoints = np.random.rand(500)*8
 x_c = torch.Tensor(xPoints).view(-1,1).requires_grad_(True)
 
 # Initial Conditions
@@ -117,22 +117,22 @@ dy_dx_true_ic = torch.Tensor([1]).view(-1,1) #dy(0)/dx = 1
 torch.manual_seed(123)
 
 model = FCN(1,1,40,4)
-optimizer = torch.optim.Adam(model.parameters(),lr = 1e-3)
+optimizer = torch.optim.Adam(model.parameters(),lr = 0.40e-3)
 # lr is learning rate
 
 files = []
-loss_history = {"pde_loss":[],"ic_loss":[],"bc_loss":[],"total_loss":[]}
+loss_history = {"pde_loss":[],"ic_1_loss":[],"ic_2_loss":[],"bc_loss":[],"total_loss":[]}
 
 # Weights for the loss terms when calculating total loss
-w_pde = 1.5
-w_ic_1 = 0.1 # For each initial condition added a weight to adjust later on
-w_ic_2 = 0.4
+w_pde = 1.0#1.5
+w_ic_1 = 10.0#1.5#0.1 # For each initial condition added a weight to adjust later on
+w_ic_2 = 0.001#0.01#0.4
 W_bc = 1.0
 
 #Coefficient of y(x) in O.D.E.
 lam = 1 
 
-for i in range(1000):
+for i in range(6000):
     
     optimizer.zero_grad()
     
@@ -155,7 +155,9 @@ for i in range(1000):
     dy_dx_pred_ic = torch.autograd.grad(y_pred_ic, x_ic, grad_outputs=torch.ones_like(y_pred_ic), create_graph= True)[0]
     
     #Summing losses of all ICs (can do them seperately too with individual weights if this method isn't reducing IC_loss satifactorily)
-    IC_loss = w_ic_1*torch.mean((y_pred_ic - y_true_ic)**2)  + w_ic_2*torch.mean((dy_dx_pred_ic - dy_dx_true_ic)**2)
+    IC_1_loss = w_ic_1*torch.mean((y_pred_ic - y_true_ic)**2)
+    IC_2_loss = w_ic_2*torch.mean((dy_dx_pred_ic - dy_dx_true_ic)**2)
+    IC_loss = IC_1_loss + IC_2_loss
     
     # Adding the total loss here
     total_loss = w_pde*pde_loss + IC_loss #+ w_bs*BC_loss
@@ -163,13 +165,14 @@ for i in range(1000):
     total_loss.backward()
     optimizer.step()
     
-    if (i+1) % 10 == 0:
+    if (i+1) % 20 == 0:
         loss_history["pde_loss"].append(pde_loss.detach())
-        loss_history["ic_loss"].append(IC_loss.detach())
+        loss_history["ic_1_loss"].append(IC_1_loss.detach())
+        loss_history["ic_2_loss"].append(IC_2_loss.detach())
         # loss_history["bc_loss"].append(BC_loss.detach())
         loss_history["total_loss"].append(total_loss.detach())
         
-        xCheck = np.random.rand(1500)*8
+        xCheck = np.random.rand(750)*8
         x_check = torch.Tensor(xCheck).view(-1,1)
         
         y_pred = model(x_check)
@@ -185,7 +188,8 @@ for i in range(1000):
 fig, ax = plt.subplots(figsize=(4, 3))
 ax.plot(loss_history["pde_loss"], label="PDE loss")
 
-ax.plot(loss_history["ic_loss"], label="IC loss")
+ax.plot(loss_history["ic_1_loss"], label="IC_1 loss")
+ax.plot(loss_history["ic_2_loss"], label="IC_2 loss")
 
 #ax.plot(loss_history["bc_loss"], label="BC loss")
 
