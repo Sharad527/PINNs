@@ -5,7 +5,7 @@ Created on Sat Apr 12 10:52:16 2025
 
 @author: aravind
 
-RLN means Residual Loss Network (My Shorthand for No training data PINNS)
+RLNN means Residual Loss Network (My Shorthand for No training data PINNS)
 
 Working on a simple O.D.E. dy/dx + y = 0 (0<x<4) for y(0) = 1
 
