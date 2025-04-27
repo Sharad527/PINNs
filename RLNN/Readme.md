@@ -18,3 +18,4 @@ pde_loss is given generic loss weightage of 1
  <img width="520" alt="RLNN_mark2_1,10,0 001andlr=0 4e-3" src="https://github.com/user-attachments/assets/694ea93e-5ac6-4c97-a491-c202cd3b78fa" />
 </p>
 
+3.Adv_RLNN.py can solve the laguerre equation with a reasonable degree of accuracy for n=2 to n=6, haven't tested n>6 yet
