@@ -2,7 +2,7 @@ n-values of the laguerre polynomial:
 
 n=10 
 
-<img width="713" alt="n=10" src="https://github.com/user-attachments/assets/95ae5c44-3b75-4484-8b66-e957d79919ce" />
+<img width="713" alt="n=10" src="https://github.com/user-attachments/assets/95ae5c44-3b75-4484-8b66-e957d79919ce" /> \\
 
 n=9
 
